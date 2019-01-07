@@ -1,19 +1,23 @@
 package com.github.paolorotolo.appintro
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-
-import com.github.paolorotolo.appintro.internal.LogHelper
-import com.github.paolorotolo.appintro.internal.TypefaceContainer
-
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import com.github.paolorotolo.appintro.internal.LogHelper
+import com.github.paolorotolo.appintro.internal.TypefaceContainer
+import pl.droidsonroids.gif.GifDrawable
+
+
+
+
 
 internal const val ARG_TITLE = "title"
 internal const val ARG_TITLE_TYPEFACE = "title_typeface"
@@ -109,10 +113,22 @@ abstract class AppIntroBaseFragment : Fragment(), ISlideSelectionListener, ISlid
         titleTypeface?.applyTo(titleText)
         descTypeface?.applyTo(descriptionText)
 
-        slideImage.setImageResource(drawable)
+        if( isGifResource(drawable)){
+            val gifFromResource = GifDrawable(resources, drawable)
+            slideImage.setImageDrawable(gifFromResource)
+        }
+        else{
+            slideImage.setImageResource(drawable)
+        }
         mainLayout?.setBackgroundColor(defaultBackgroundColor)
 
         return view
+    }
+
+    private fun isGifResource(resourceId: Int): Boolean {
+        val value = TypedValue()
+        resources.getValue(resourceId, value, true)
+        return value.string.toString().endsWith("gif")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
